@@ -1,5 +1,9 @@
 package com.learn.tcp;
 
+import com.learn.tcp.codec.Byte2StringCodec;
+import com.learn.tcp.handler.HandlerIn11;
+import com.learn.tcp.handler.HandlerIn12;
+import com.learn.tcp.handler.HandlerOut11;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -29,14 +33,20 @@ public class Server {
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
+                        // 这里有一个小bug，也可能不是bug，我之前遇到过，就是Out必须不能放在最后一个，否则不起作用。
+                        pipeline.addLast(new HandlerOut11());
+                        pipeline.addLast(new HandlerIn11());
+                        pipeline.addLast(new Byte2StringCodec());
+                        pipeline.addLast(new HandlerIn12());
                     }
                 });
         ChannelFuture sync = serverBootstrap
                 .bind(new InetSocketAddress("127.0.0.1", 8190))
                 .addListener((ChannelFutureListener) channelFuture -> {
                     InetSocketAddress inetSocketAddress = (InetSocketAddress) channelFuture.channel().localAddress();
-                    LOGGER.info("服务端监听: {},{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
+                    LOGGER.info("服务端监听: {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
                 });
+        Client.main(args);
         ChannelFuture channelFuture = sync.channel().closeFuture();
         channelFuture.sync();
     }
