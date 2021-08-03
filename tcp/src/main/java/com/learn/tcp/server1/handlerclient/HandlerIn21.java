@@ -1,4 +1,4 @@
-package com.learn.tcp.handler2;
+package com.learn.tcp.server1.handlerclient;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

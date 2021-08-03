@@ -1,11 +1,9 @@
-package com.learn.tcp;
+package com.learn.tcp.server1;
 
-import com.learn.tcp.codec.Byte2StringCodec;
-import com.learn.tcp.handler2.HandlerIn21;
+import com.learn.tcp.server1.codec.Byte2StringCodec;
+import com.learn.tcp.server1.handlerclient.HandlerIn21;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -25,7 +23,7 @@ public class Client {
 
     public static void main(String[] args) throws InterruptedException {
         Bootstrap bootstrap = new Bootstrap();
-        ChannelFuture sync = bootstrap
+        ChannelFuture channelFuture = bootstrap
                 .group(new NioEventLoopGroup(1))
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
@@ -36,12 +34,13 @@ public class Client {
                         pipeline.addLast(new HandlerIn21());
                     }
                 })
-                .connect("127.0.0.1", 8190)
-                .sync();
-        Channel channel = sync.channel();
-        channel.writeAndFlush(Unpooled.buffer().writeBytes("test".getBytes()));
+                .connect("127.0.0.1", 8190);
+        channelFuture.syncUninterruptibly();
+        Channel channel = channelFuture.channel();
+        channel.writeAndFlush(Unpooled.buffer().writeBytes("text1".getBytes()));
+        LockSupport.parkNanos(Duration.ofMillis(50).toNanos());
+        channel.writeAndFlush(Unpooled.buffer().writeBytes("text2".getBytes()));
         LockSupport.parkNanos(Duration.ofMillis(100).toNanos());
-        channel.flush();
-        channel.writeAndFlush(Unpooled.buffer().writeBytes("text".getBytes()));
+        channel.writeAndFlush(Unpooled.buffer().writeBytes("forward".getBytes()));
     }
 }
