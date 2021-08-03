@@ -17,7 +17,7 @@ public class HandlerOut11 extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        LOGGER.info("实际的写出操作是交给Pipeline的TailHandler处理的，本质调用了Unsafe写出，因此我们无法控制，只能表示通知: {}被写出了", msg);
+        LOGGER.info("实际的写出操作是交给Pipeline的TailHandler处理的，本质调用了Unsafe写出，因此我们无法控制，只能表示通知: 👉{}👈被写出了", msg);
         ctx.write(msg);
     }
 
