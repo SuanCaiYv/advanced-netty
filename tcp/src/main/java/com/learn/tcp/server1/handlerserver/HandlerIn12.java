@@ -1,6 +1,6 @@
 package com.learn.tcp.server1.handlerserver;
 
-import com.learn.tcp.server1.codec.Byte2StringCodec;
+import com.learn.tcp.codec.Byte2StringCodec;
 import com.learn.tcp.util.CommonUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -18,7 +18,7 @@ public class HandlerIn12 extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        LOGGER.info("我们读到了: 🤜{}🤛", msg);
+        LOGGER.info("我们读到了: 🤜{}型数据: {}🤛", msg.getClass().getName(), msg);
         if (msg.equals("forward")) {
             Bootstrap bootstrap = new Bootstrap();
             ChannelFuture sync = bootstrap

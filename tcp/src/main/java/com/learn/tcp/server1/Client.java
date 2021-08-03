@@ -1,6 +1,6 @@
 package com.learn.tcp.server1;
 
-import com.learn.tcp.server1.codec.Byte2StringCodec;
+import com.learn.tcp.codec.Byte2StringCodec;
 import com.learn.tcp.server1.handlerclient.HandlerIn21;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;

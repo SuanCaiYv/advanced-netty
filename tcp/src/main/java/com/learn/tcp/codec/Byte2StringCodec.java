@@ -1,4 +1,4 @@
-package com.learn.tcp.server1.codec;
+package com.learn.tcp.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,9 +24,12 @@ public class Byte2StringCodec extends ByteToMessageCodec<String> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        LOGGER.info("解码一次");
-        byte[] array = new byte[in.readableBytes()];
-        in.readBytes(array, 0, array.length);
-        out.add(new String(array));
+        if (in.hasArray()) {
+            out.add(new String(in.array(), in.arrayOffset(), in.readableBytes()));
+        } else {
+            byte[] bytes = new byte[in.readableBytes()];
+            in.readBytes(bytes);
+            out.add(new String(bytes));
+        }
     }
 }

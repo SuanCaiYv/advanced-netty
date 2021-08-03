@@ -1,4 +1,4 @@
-package com.learn.tcp.server3.decoder;
+package com.learn.tcp.decoder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,6 +1,6 @@
 package com.learn.tcp.server1;
 
-import com.learn.tcp.server1.codec.Byte2StringCodec;
+import com.learn.tcp.codec.Byte2StringCodec;
 import com.learn.tcp.server1.handlerserver.HandlerIn11;
 import com.learn.tcp.server1.handlerserver.HandlerIn12;
 import com.learn.tcp.server1.handlerserver.HandlerOut11;
@@ -45,8 +45,10 @@ public class Server {
                 })
                 .bind(new InetSocketAddress("127.0.0.1", 8190))
                 .addListener((ChannelFutureListener) future -> {
-                    InetSocketAddress inetSocketAddress = (InetSocketAddress) future.channel().localAddress();
-                    LOGGER.info("服务端监听: {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
+                    if (LOGGER.isDebugEnabled()) {
+                        InetSocketAddress inetSocketAddress = (InetSocketAddress) future.channel().localAddress();
+                        LOGGER.info("服务端监听: {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
+                    }
                 });
         Client.main(args);
         channelFuture.syncUninterruptibly();

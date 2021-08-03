@@ -17,13 +17,17 @@ public class HandlerOut11 extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        LOGGER.info("实际的写出操作是交给Pipeline的TailHandler处理的，本质调用了Unsafe写出，因此我们无法控制，只能表示通知: 👉{}👈被写出了", msg);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("实际的写出操作是交给Pipeline的TailHandler处理的，本质调用了Unsafe写出，因此我们无法控制，只能表示通知: 👉{}👈被写出了", msg);
+        }
         ctx.write(msg);
     }
 
     @Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
-        LOGGER.info("实际的刷新操作也不受我们管控，在这里我们仅做一个通知: 消息被刷新出Channel");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("实际的刷新操作也不受我们管控，在这里我们仅做一个通知: 消息被刷新出Channel");
+        }
         ctx.flush();
     }
 }
