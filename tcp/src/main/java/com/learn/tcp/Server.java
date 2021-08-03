@@ -29,7 +29,6 @@ public class Server {
 
     public static void main(String[] args) throws InterruptedException {
         String osName = System.getProperty("os.name").replaceAll(" ", "").toUpperCase();
-        System.out.println(osName.trim());
         EventLoopGroup boss, worker;
         Class<? extends ServerChannel> channelClass;
         if (osName.contains("MACOSX")) {

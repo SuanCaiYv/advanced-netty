@@ -16,8 +16,8 @@ public class HandlerIn12 extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        LOGGER.info("我们读到了: {}", msg);
-        ctx.write("hello client");
+        LOGGER.info("我们读到了: 🤜{}🤛", msg);
+        ctx.write("hello client: " + msg);
         ctx.flush();
     }
 

@@ -16,6 +16,7 @@ public class HandlerIn11 extends ChannelInboundHandlerAdapter {
 
     static final Logger LOGGER = LoggerFactory.getLogger(HandlerIn11.class);
 
+    // 远程连接建立=>new一个Channel=>注册到EventLoop=>变为活跃状态。
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("此Channel: {}已经变为活跃状态。", ctx.channel().id());
