@@ -1,10 +1,6 @@
 package com.learn.tcp;
 
-import com.learn.tcp.codec.Byte2MsgCodec;
-import com.learn.tcp.decoder.Byte2String;
-import com.learn.tcp.decoder.String2Msg;
 import com.learn.tcp.pojo.Msg;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;
@@ -22,9 +18,12 @@ public class ServerTest {
             @Override
             protected void initChannel(Channel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(new Byte2String());
-                pipeline.addLast(new String2Msg());
                 pipeline.addLast(new ChannelInboundHandlerAdapter() {
+                    @Override
+                    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                        ctx.writeAndFlush(Msg.withPlainText("hi"));
+                    }
+
                     @Override
                     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                         System.out.println("我们读到了: " + msg);
@@ -39,6 +38,7 @@ public class ServerTest {
         });
         Msg msg = Msg.withPlainText("hello");
         byte[] bytes = msg.asByteArrayLightweight();
-        embeddedChannel.writeInbound(Unpooled.buffer().writeBytes(bytes));
+        Msg read = embeddedChannel.readOutbound();
+        System.out.println(read);
     }
 }

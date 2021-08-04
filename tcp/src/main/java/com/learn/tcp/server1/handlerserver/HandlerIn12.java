@@ -20,9 +20,10 @@ public class HandlerIn12 extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         LOGGER.info("我们读到了: 🤜{}型数据: {}🤛", msg.getClass().getName(), msg);
         if (msg.equals("forward")) {
+            // 当前服务器做为客户端，代替客户端对远程节点发起请求并返回响应。
             Bootstrap bootstrap = new Bootstrap();
             ChannelFuture sync = bootstrap
-                    // 在当前eventloop中发起远程请求
+                    // 在当前EventLoop中发起远程请求，这是一个关键，因为这样可以避免上下文切换
                     .group(ctx.channel().eventLoop())
                     .channel(CommonUtils.clientChannel())
                     .handler(new ChannelInitializer<>() {
@@ -38,6 +39,7 @@ public class HandlerIn12 extends ChannelInboundHandlerAdapter {
 
                                 @Override
                                 public void channelRead(ChannelHandlerContext ctx0, Object msg0) throws Exception {
+                                    // 把远程节点的响应返回给客户端
                                     ctx.write("hi client: " + msg0);
                                     ctx.flush();
                                 }

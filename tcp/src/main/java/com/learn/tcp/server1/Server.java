@@ -20,6 +20,8 @@ import java.util.concurrent.locks.LockSupport;
  * @author CodeWithBuff(给代码来点Buff)
  * @device MacBookPro
  * @time 2021/7/30 16:41
+ * <br/>
+ * 一个简单的Echo服务器，包含了对于远程节点的请求
  */
 public class Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);

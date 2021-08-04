@@ -15,6 +15,8 @@ import java.net.InetSocketAddress;
  * @author CodeWithBuff(给代码来点Buff)
  * @device MacBookPro
  * @time 2021/8/3 15:27
+ * <br/>
+ * 做为服务器1远程请求的服务器存在
  */
 public class Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
