@@ -1,6 +1,7 @@
 package com.learn.tcp.codec;
 
-import com.learn.tcp.pojo.Msg;
+import com.learn.common.transport.Msg;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 
@@ -15,12 +16,11 @@ public class String2MsgCodec extends MessageToMessageCodec<String, Msg> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, String input, List<Object> out) throws Exception {
-        Msg msg = Msg.parseLightweight(input);
-        out.add(msg);
+        out.add(Msg.deserialize(Unpooled.buffer().readBytes(input.getBytes())));
     }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Msg msg, List<Object> out) throws Exception {
-        out.add(msg.asStringLightweight());
+        ;
     }
 }

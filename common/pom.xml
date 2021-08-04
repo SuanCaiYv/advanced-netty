@@ -9,16 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.learn.advanced-netty</groupId>
-    <artifactId>tcp</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.learn</groupId>
-            <artifactId>common</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    <artifactId>common</artifactId>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>

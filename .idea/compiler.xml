@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="tcp" />
         <module name="http" />
+        <module name="common" />
         <module name="websocket" />
       </profile>
     </annotationProcessing>

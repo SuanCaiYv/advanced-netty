@@ -1,6 +1,6 @@
 package com.learn.tcp.codec;
 
-import com.learn.tcp.pojo.Msg;
+import com.learn.common.transport.Msg;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
@@ -16,22 +16,12 @@ public class Byte2MsgCodec extends ByteToMessageCodec<Msg> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        String input;
-        if (in.hasArray()) {
-            byte[] bytes = in.array();
-            input = new String(bytes, in.arrayOffset(), in.readableBytes());
-        } else {
-            byte[] bytes = new byte[in.readableBytes()];
-            in.readBytes(bytes);
-            input = new String(bytes);
-        }
-        Msg msg = Msg.parseLightweight(input);
+        Msg msg = Msg.deserialize(in);
         out.add(msg);
     }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Msg msg, ByteBuf out) throws Exception {
-        String str = msg.asStringLightweight();
-        out.writeBytes(str.getBytes());
+        msg.serialize(out);
     }
 }

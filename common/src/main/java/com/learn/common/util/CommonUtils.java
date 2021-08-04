@@ -1,4 +1,4 @@
-package com.learn.tcp.util;
+package com.learn.common.util;
 
 import io.netty.channel.Channel;
 import io.netty.channel.DefaultEventLoopGroup;
@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -64,7 +66,7 @@ public class CommonUtils {
     }
 
     public static EventLoopGroup bossEventLoopGroup() {
-        if (osName.contains("macos")) {
+        if (osName.contains("macos") || osName.contains("osx")) {
             return new KQueueEventLoopGroup(cpuNums >= 16 ? cpuNums >> 2 : 1);
         } else if (osName.contains("linux")) {
             return new EpollEventLoopGroup(cpuNums >= 16 ? cpuNums >> 2 : 1);
@@ -74,7 +76,7 @@ public class CommonUtils {
     }
 
     public static EventLoopGroup workerEventLoopGroup() {
-        if (osName.contains("macos")) {
+        if (osName.contains("macos") || osName.contains("osx")) {
             return new KQueueEventLoopGroup(cpuNums >= 32 ? cpuNums << 2 : cpuNums);
         } else if (osName.contains("linux")) {
             return new EpollEventLoopGroup(cpuNums >= 32 ? cpuNums << 2 : cpuNums);
@@ -84,7 +86,7 @@ public class CommonUtils {
     }
 
     public static Class<? extends ServerChannel> serverChannel() {
-        if (osName.contains("macos")) {
+        if (osName.contains("macos") || osName.contains("osx")) {
             return KQueueServerSocketChannel.class;
         } else if (osName.contains("linux")) {
             return EpollServerSocketChannel.class;
@@ -130,5 +132,17 @@ public class CommonUtils {
 
     public static File caFile() {
         return caFile;
+    }
+
+    public static byte[] md5(byte[] src) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(src);
+            byte[] digest = md.digest();
+            return digest;
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.warn("加密失败");
+            return new byte[16];
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.learn.tcp.server3;
 
+import com.learn.common.util.CommonUtils;
 import com.learn.tcp.decoder.Byte2String;
 import com.learn.tcp.encoder.Integer2Byte;
-import com.learn.tcp.util.CommonUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.util.ReferenceCountUtil;

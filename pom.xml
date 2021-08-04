@@ -12,6 +12,7 @@
         <module>tcp</module>
         <module>http</module>
         <module>websocket</module>
+        <module>common</module>
     </modules>
 
     <dependencies>

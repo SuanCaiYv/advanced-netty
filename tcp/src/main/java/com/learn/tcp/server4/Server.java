@@ -1,9 +1,7 @@
 package com.learn.tcp.server4;
 
+import com.learn.common.util.CommonUtils;
 import com.learn.tcp.codec.Byte2MsgCodec;
-import com.learn.tcp.decoder.Byte2Integer;
-import com.learn.tcp.encoder.String2Byte;
-import com.learn.tcp.util.CommonUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.handler.ssl.ClientAuth;

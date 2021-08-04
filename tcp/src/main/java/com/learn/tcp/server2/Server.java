@@ -1,7 +1,7 @@
 package com.learn.tcp.server2;
 
+import com.learn.common.util.CommonUtils;
 import com.learn.tcp.codec.Byte2StringCodec;
-import com.learn.tcp.util.CommonUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.handler.logging.LogLevel;

@@ -1,10 +1,10 @@
 package com.learn.tcp.server1;
 
+import com.learn.common.util.CommonUtils;
 import com.learn.tcp.codec.Byte2StringCodec;
 import com.learn.tcp.server1.handlerserver.HandlerIn11;
 import com.learn.tcp.server1.handlerserver.HandlerIn12;
 import com.learn.tcp.server1.handlerserver.HandlerOut11;
-import com.learn.tcp.util.CommonUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.handler.logging.LogLevel;

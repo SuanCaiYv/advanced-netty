@@ -1,6 +1,6 @@
 package com.learn.tcp;
 
-import com.learn.tcp.pojo.Msg;
+import com.learn.tcp.transport.Msg;
 import io.netty.channel.*;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,6 @@ public class ServerTest {
             }
         });
         Msg msg = Msg.withPlainText("hello");
-        byte[] bytes = msg.asByteArrayLightweight();
         Msg read = embeddedChannel.readOutbound();
         System.out.println(read);
     }

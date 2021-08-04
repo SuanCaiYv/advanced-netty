@@ -1,6 +1,5 @@
 package com.learn.tcp.decoder;
 
-import com.learn.tcp.pojo.Msg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
@@ -15,11 +14,6 @@ import java.util.List;
 public class String2Msg extends MessageToMessageDecoder<String> {
     @Override
     protected void decode(ChannelHandlerContext ctx, String input, List<Object> out) throws Exception {
-        Msg msg = Msg.parseLightweight(input);
-        if (msg == null) {
-            ctx.writeAndFlush(Msg.withError(new IOException("格式错误")));
-        } else {
-            ctx.fireChannelRead(msg);
-        }
+        ;
     }
 }
