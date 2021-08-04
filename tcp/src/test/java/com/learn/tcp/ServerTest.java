@@ -1,6 +1,6 @@
 package com.learn.tcp;
 
-import com.learn.tcp.transport.Msg;
+import com.learn.common.transport.Msg;
 import io.netty.channel.*;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;

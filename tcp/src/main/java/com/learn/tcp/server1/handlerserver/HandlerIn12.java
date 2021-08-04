@@ -1,7 +1,7 @@
 package com.learn.tcp.server1.handlerserver;
 
+import com.learn.common.util.CommonUtils;
 import com.learn.tcp.codec.Byte2StringCodec;
-import com.learn.tcp.util.CommonUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import org.slf4j.Logger;

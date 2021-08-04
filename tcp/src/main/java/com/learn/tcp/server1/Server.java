@@ -33,7 +33,12 @@ public class Server {
         ChannelFuture channelFuture = serverBootstrap
                 .channel(CommonUtils.serverChannel())
                 .group(boss, worker)
-                .handler(new LoggingHandler(LogLevel.DEBUG))
+                .handler(new ChannelInboundHandlerAdapter() {
+                    @Override
+                    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                        LOGGER.info("服务端监听Channel已激活");
+                    }
+                })
                 .childHandler(new ChannelInitializer<>() {
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
