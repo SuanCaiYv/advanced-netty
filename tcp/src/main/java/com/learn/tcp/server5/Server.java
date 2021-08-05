@@ -95,9 +95,7 @@ public class Server {
                 LOGGER.info("发送一个心跳包，还剩{}次机会", count);
                 if (count > 0) {
                     // 每10s发送一个心跳包，超过10次没有应答，说明下线
-                    ctx.channel().eventLoop().schedule(() -> {
-                        heartbeat(ctx);
-                    }, 1, TimeUnit.SECONDS);
+                    ctx.channel().eventLoop().schedule(() -> heartbeat(ctx), 1, TimeUnit.SECONDS);
                 }
             }
         }

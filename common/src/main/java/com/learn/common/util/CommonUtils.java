@@ -13,6 +13,7 @@ import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.NettyRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class CommonUtils {
 
     private static final String osName = System.getProperty("os.name").replaceAll(" ", "").toLowerCase();
 
-    private static final int cpuNums = Runtime.getRuntime().availableProcessors();
+    private static final int cpuNums = NettyRuntime.availableProcessors();
 
     private static final File serverCrtChainFile;
 

@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Msg {
 
-    public static final int DEFAULT_SIZE = 76;
+    public static final int EMPTY_SIZE = 76;
 
     @Data
     @With
@@ -23,24 +23,29 @@ public class Msg {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Head {
-        public static final int TYPE_HEARTBEAT = 1 << 1;
+        public static final int TYPE_HEARTBEAT   = 1 << 1;
 
-        public static final int TYPE_TEXT      = 1 << 2;
+        public static final int TYPE_TEXT        = 1 << 2;
 
-        public static final int TYPE_IMG       = 1 << 3;
+        public static final int TYPE_IMG         = 1 << 3;
 
-        public static final int TYPE_VIDEO     = 1 << 4;
+        public static final int TYPE_VIDEO       = 1 << 4;
 
-        public static final int TYPE_FILE      = 1 << 5;
+        public static final int TYPE_FILE        = 1 << 5;
 
-        public static final int TYPE_INIT      = 1 << 6;
+        public static final int TYPE_INIT        = 1 << 6;
 
-        public static final int TYPE_ERROR     = 1 << 7;
+        public static final int TYPE_ACK         = 1 << 7;
 
-        public static final int HEAD_SIZE      = 60;
+        public static final int TYPE_ERROR       = 1 << 8;
+
+        private static final int AUTH_TOKEN_SIZE = 32;
+
+        public static final int HEAD_SIZE        = 60 + AUTH_TOKEN_SIZE;
 
         private int type;
 
+        // 这里把size定义为消息体的大小，即Body的大小。
         private long size;
 
         private long[] id;
@@ -52,6 +57,8 @@ public class Msg {
         private long senderId;
 
         private long receiverId;
+
+        private byte[] authToken;
     }
 
     @Data
@@ -63,23 +70,9 @@ public class Msg {
         private byte[] body;
     }
 
-    @Data
-    @With
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Tail {
-        public static final int TAIL_SIZE = 16;
-
-        // 16字节的占位符
-        private byte[] tail;
-    }
-
     private Head head;
 
     private Body body;
-
-    private Tail tail;
 
     public void serialize(ByteBuf out) {
         // 硬核编码
@@ -91,8 +84,8 @@ public class Msg {
         out.writeLong(this.head.arrivedTime);
         out.writeLong(this.head.senderId);
         out.writeLong(this.head.receiverId);
+        out.writeBytes(this.head.authToken);
         out.writeBytes(this.body.body);
-        out.writeBytes(this.tail.tail);
     }
 
     public static Msg deserialize(ByteBuf src) {
@@ -105,10 +98,10 @@ public class Msg {
         long arrivedTime = src.readLong();
         long senderId = src.readLong();
         long receiverId = src.readLong();
-        byte[] body = new byte[(int) (size - DEFAULT_SIZE)];
+        byte[] authToken = new byte[Head.AUTH_TOKEN_SIZE];
+        src.readBytes(authToken, 0, authToken.length);
+        byte[] body = new byte[(int) size];
         src.readBytes(body, 0, body.length);
-        byte[] tail = new byte[Tail.TAIL_SIZE];
-        src.readBytes(tail, 0, tail.length);
         Msg msg = withEmpty();
         Head h = msg.head;
         h.setType(type);
@@ -120,31 +113,26 @@ public class Msg {
         h.setReceiverId(receiverId);
         Body b = msg.body;
         b.setBody(body);
-        Tail t = msg.tail;
-        t.setTail(tail);
         return msg;
     }
 
     private static Msg withEmpty() {
         Head h = Head.builder()
                 .type(Head.TYPE_HEARTBEAT)
-                .size(DEFAULT_SIZE)
+                .size(0)
                 .id(new long[] {0, 0})
                 .createdTime(System.currentTimeMillis())
                 .arrivedTime(System.currentTimeMillis())
                 .senderId(0)
                 .receiverId(0)
+                .authToken(new byte[Head.AUTH_TOKEN_SIZE])
                 .build();
         Body b = Body.builder()
                 .body(new byte[0])
                 .build();
-        Tail t = Tail.builder()
-                .tail(new byte[Tail.TAIL_SIZE])
-                .build();
         Msg msg = Msg.builder()
                 .head(h)
                 .body(b)
-                .tail(t)
                 .build();
         return msg;
     }
@@ -152,6 +140,8 @@ public class Msg {
     public static Msg withHeartbeat() {
         Msg msg = withEmpty();
         Head h = msg.head;
+        h.setCreatedTime(0L);
+        h.setArrivedTime(0L);
         h.setType(Head.TYPE_HEARTBEAT);
         return msg;
     }
@@ -161,9 +151,16 @@ public class Msg {
         Msg msg = withEmpty();
         Head h = msg.head;
         h.setType(Head.TYPE_TEXT);
-        h.setSize(h.getSize() + src.length);
+        h.setSize(src.length);
         Body b = msg.body;
         b.setBody(src);
+        return msg;
+    }
+
+    public static Msg withAck() {
+        Msg msg = withEmpty();
+        Head h = msg.head;
+        h.setType(Head.TYPE_ACK);
         return msg;
     }
 }
