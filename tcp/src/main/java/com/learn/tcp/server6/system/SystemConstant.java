@@ -6,7 +6,7 @@ package com.learn.tcp.server6.system;
  * @time 2021/8/5 16:12
  */
 public class SystemConstant {
-    public static final Integer READ_TIMEOUT = 30;
+    public static final Integer READ_TIMEOUT = 12;
 
     public static final String CONTINUATION = "CONTINUATION";
 

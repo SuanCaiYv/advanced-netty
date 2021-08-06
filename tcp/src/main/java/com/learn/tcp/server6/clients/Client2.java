@@ -1,4 +1,4 @@
-package com.learn.tcp.server6;
+package com.learn.tcp.server6.clients;
 
 import com.learn.common.transport.Msg;
 import com.learn.common.util.CommonUtils;
@@ -9,14 +9,15 @@ import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Scanner;
+
 /**
  * @author CodeWithBuff(给代码来点Buff)
- * @device MacBookPro
- * @time 2021/8/4 16:49
+ * @device iMacPro
+ * @time 2021/8/5 9:05 下午
  */
-public class Client {
-
-    static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
+public class Client2 {
+    static final Logger LOGGER = LoggerFactory.getLogger(Client2.class);
 
     public static void main(String[] args) {
         Bootstrap bootstrap = new Bootstrap();
@@ -31,6 +32,12 @@ public class Client {
                         pipeline.addLast(new ChannelInboundHandlerAdapter() {
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                Msg input = (Msg) msg;
+                                if (input.getHead().getType() == Msg.Head.TYPE_HEARTBEAT) {
+                                    ctx.writeAndFlush(Msg.withHeartbeat());
+                                } else {
+                                    ctx.fireChannelRead(msg);
+                                }
                                 LOGGER.info("客户端读到了: 🤟{}型数据: {}🤏", msg.getClass().getName(), msg);
                                 ReferenceCountUtil.release(msg);
                             }
@@ -40,6 +47,16 @@ public class Client {
                 .connect("127.0.0.1", 8690)
                 .syncUninterruptibly();
         Channel channel = channelFuture.channel();
-        channel.writeAndFlush(Msg.withPlainText("hello"));
+        Msg init = Msg.withPlainText("init");
+        init.getHead().setType(Msg.Head.TYPE_INIT);
+        init.getHead().setSenderId(2L);
+        channel.writeAndFlush(init);
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            String s = scanner.nextLine();
+            Msg msg = Msg.withPlainText(s);
+            msg.getHead().setSenderId(2L);
+            channel.writeAndFlush(msg);
+        }
     }
 }

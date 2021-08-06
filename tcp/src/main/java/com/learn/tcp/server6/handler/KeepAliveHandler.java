@@ -48,25 +48,32 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
 
     static void heartbeatTask(ChannelHandlerContext ctx) {
         Channel channel = ctx.channel();
+        InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+        if (!channel.isActive()) {
+            long userId = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_ID)).get();
+            MsgPushHandler.channels().remove(userId);
+            LOGGER.warn("远程连接: ({}) 已下线", (address.getHostName() + ":" + address.getPort()));
+            return ;
+        }
         int count = (int) channel.attr(AttributeKey.valueOf(SystemConstant.REMAINS)).get();
+        System.out.println(channel.hashCode() + "," + count);
         boolean continuation = (boolean) channel.attr(AttributeKey.valueOf(SystemConstant.CONTINUATION)).get();
         if (count > 0 && continuation) {
             channel.attr(AttributeKey.valueOf(SystemConstant.REMAINS)).set(count - 1);
             ctx.writeAndFlush(HEARTBEAT_MSG);
             channel.eventLoop().schedule(() -> heartbeatTask(ctx), SystemConstant.DEFAULT_INTERVAL, TimeUnit.SECONDS);
         } else if (count <= 0) {
-            InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-            LOGGER.info("远程节点({})已离线", (address.getHostName() + ":" + address.getPort()));
+            LOGGER.info("远程节点: ({}) 已不可用", (address.getHostName() + ":" + address.getPort()));
             channel.close().addListeners(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
-                    LOGGER.info("远程节点({})连接已关闭", (address.getHostName() + ":" + address.getPort()));
+                    LOGGER.info("远程节点 ({}) 连接已关闭", (address.getHostName() + ":" + address.getPort()));
                 }
             });
             ctx.fireUserEventTriggered(new OfflineEvent());
         } else {
-            InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-            LOGGER.info("远程节点({})已重新上线", (address.getHostName() + ":" + address.getPort()));
+            channel.attr(AttributeKey.valueOf(SystemConstant.CONTINUATION)).set(true);
+            LOGGER.info("远程节点 ({}) 已响应，取消心跳", (address.getHostName() + ":" + address.getPort()));
         }
     }
 }
